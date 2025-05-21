@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accordion HTML Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f8fb;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a5d9f;
+    }
+    .entry {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input.heading, textarea.description {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #2a5d9f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    button:hover {
+      background-color: #1d4374;
+    }
+    #output {
+      white-space: pre-wrap;
+      background: #ffffff;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Accordion HTML Generator</h1>
+  <form id="accordionForm">
+    <div class="entry">
+      <label>Heading:</label>
+      <input type="text" class="heading" placeholder="Enter heading">
+      <label>Description:</label>
+      <textarea class="description" placeholder="Enter description"></textarea>
+    </div>
+    <div id="buttonContainer">
+      <button type="button" id="addBtn">+ Add Section</button>
+      <button type="button" id="generateBtn">Generate HTML</button>
+    </div>
+  </form>
+
+  <h2 style="margin-top: 2rem;">Output HTML</h2>
+  <pre id="output"></pre>
+  <button id="downloadBtn" style="margin-top: 1rem;">Download as HTML File</button>
+  <button id="copyBtn" style="margin-top: 1rem; margin-left: 0.5rem;">Copy to Clipboard</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('addBtn').addEventListener('click', () => {
+        const form = document.getElementById('accordionForm');
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `
+          <label>Heading:</label>
+          <input type="text" class="heading" placeholder="Enter heading">
+          <label>Description:</label>
+          <textarea class="description" placeholder="Enter description"></textarea>
+        `;
+        form.insertBefore(div, document.getElementById('buttonContainer'));
+      });
+
+      document.getElementById('generateBtn').addEventListener('click', () => {
+        const headings = document.querySelectorAll('.heading');
+        const descriptions = document.querySelectorAll('.description');
+        let output = '<h2 style="font-family: Arial; color: #2a5d9f; text-align: center;">Custom Accordion</h2>\n\n';
+
+        for (let i = 0; i < headings.length; i++) {
+          const h = headings[i].value.trim();
+          const d = descriptions[i].value.trim();
+          if (!h || !d) continue;
+          output += `<details style='border:2px solid #d0dff0; border-radius:8px; margin-bottom:1rem; background:#fff; padding:1rem;'>\n`;
+          output += `  <summary style='font-size:1.2rem; font-weight:bold; color:#2a5d9f; margin-bottom:0.75rem;'>${h}</summary>\n`;
+          output += `  <div style='margin-top:0.75rem;'><p style='font-size:1rem; line-height:1.6; margin-bottom:0.5rem;'>${d}</p></div>\n`;
+          output += `</details>\n\n`;
+        }
+
+        document.getElementById('output').textContent = output;
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const content = document.getElementById('output').textContent;
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'custom-accordion.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        const content = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(content).then(() => {
+          alert('HTML copied to clipboard!');
+        }, err => {
+          alert('Failed to copy: ' + err);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
