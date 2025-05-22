@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f8fb;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a5d9f;
+    }
+    .entry, .mcq-entry {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: #2a5d9f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    button:hover {
+      background-color: #1d4374;
+    }
+    #output {
+      white-space: pre-wrap;
+      background: #ffffff;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .module-block {
+      border: 2px dashed #bbb;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>HTML Generator</h1>
+
+  <div id="moduleContainer"></div>
+
+  <div id="controls">
+    <label for="moduleSelect"><strong>Select Module:</strong></label>
+    <select id="moduleSelect">
+      <option value="accordion">Accordion</option>
+      <option value="image">Image + Caption</option>
+      <option value="code">Code Snippet</option>
+      <option value="video">Embedded Video</option>
+      <option value="flashcard">Flashcard Reveal</option>
+      <option value="alert">Tip/Alert Box</option>
+      <option value="table">Table Builder</option>
+    </select>
+    <button type="button" onclick="addModule()">+ Add Module</button>
+    <button type="button" onclick="generateAll()">Generate HTML</button>
+    <button type="button" onclick="copyToClipboard()">Copy to Clipboard</button>
+  </div>
+
+  <h2 style="margin-top: 2rem;">Output HTML</h2>
+  <pre id="output"></pre>
+
+  <script>
+    let moduleCounter = 0;
+
+    function addModule() {
+      const type = document.getElementById('moduleSelect').value;
+      const container = document.getElementById('moduleContainer');
+      const moduleId = `module-${moduleCounter++}`;
+      const block = document.createElement('div');
+      block.className = 'module-block';
+      block.dataset.type = type;
+      block.dataset.id = moduleId;
+
+      let html = '';
+
+      if (type === 'accordion') {
+        html = '<label>Heading:</label><input type="text" class="heading" placeholder="Enter heading">' +
+               '<label>Description:</label><textarea class="description" placeholder="Enter description"></textarea>';
+      } else if (type === 'image') {
+        html = '<label>Image URL:</label><input type="text" class="imageSrc" placeholder="https://...">' +
+               '<label>Alt Text:</label><input type="text" class="imageAlt" placeholder="Image description">' +
+               '<label>Caption:</label><input type="text" class="imageCaption" placeholder="Caption below image">';
+      } else if (type === 'code') {
+        html = '<label>Code Block:</label><textarea class="codeBlock" placeholder="Enter your code here"></textarea>';
+      } else if (type === 'video') {
+        html = '<label>Video Embed URL:</label><input type="text" class="videoSrc" placeholder="https://...">';
+      } else if (type === 'flashcard') {
+        html = '<label>Prompt (Question):</label><input type="text" class="flashPrompt" placeholder="Click to reveal">' +
+               '<label>Answer (Revealed):</label><input type="text" class="flashAnswer" placeholder="The hidden content">';
+      } else if (type === 'alert') {
+        html = '<label>Alert Content:</label><textarea class="alertText" placeholder="Important message"></textarea>';
+      } else if (type === 'table') {
+        html = '<label>Table Headers (comma separated):</label><input type="text" class="tableHeaders" placeholder="Header1,Header2">' +
+               '<label>Table Rows (one row per line, comma separated):</label><textarea class="tableRows" placeholder="Cell1,Cell2
+Cell3,Cell4"></textarea>';
+      }
+
+      block.innerHTML = html;
+      container.appendChild(block);
+      document.getElementById('controls').scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    function generateAll() {
+      const modules = document.querySelectorAll('.module-block');
+      let output = '';
+      modules.forEach(block => {
+        output += '<!-- module -->\n';
+      });
+      document.getElementById('output').textContent = output;
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById('output').innerText;
+      const tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      tempInput.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alert('HTML copied to clipboard!');
+    }
+  </script>
+</body>
+</html>
